@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="TestSuite" thread-count="1" verbose="1" parallel="none">
+	
+	<parameter name="driverPath"
+		value="C:\\Users\\dhbhador\\Downloads\\Windows 7\\ZIP Files\\chromedriver_win32\\chromedriver.exe" />
+	<parameter name="excelFile" value="inputexcel"/>
+	
+	<test name="FlipkartE2E">
+		<parameter name="brower" value="chrome"/>
+		<classes>
+			<class name="com.dharam.flipkarttest.LoginSearhAddToCartBuyAndLogoutE2ETest"/>
+		</classes>
+	</test>
+	
+	<!-- <listeners>
+		<listener
+			class-name="com.testng.listeners.ListenerTest" />
+	</listeners>  -->
+</suite>
