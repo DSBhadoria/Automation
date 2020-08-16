@@ -21,8 +21,8 @@ public class ExcelUtil {
 		synchronized(ExcelUtil.class) {
 			if(inputWorkBook == null) {
 				synchronized(ExcelUtil.class) {
-					String obj = (String) PropertiesUtil.getPropertyObj("\\resources\\config.properties").get(excelName);
-					createExcelInstance(obj);
+					String key = (String) PropertiesUtil.getPropertyObj("\\resources\\config.properties").get(excelName);
+					createExcelInstance(key);
 				}
 			}
 		}
@@ -34,7 +34,7 @@ public class ExcelUtil {
 	}
 
 	private void createExcelInstance(final String fileName) {
-		String filePath = System.getProperty("user.name") + fileName;
+		String filePath = System.getProperty("user.dir") + fileName;
 		try (FileInputStream ip = new FileInputStream(new File(filePath))) {
 			if(fileName.contains(".xlsx")) {
 				setInputWorkBook(new XSSFWorkbook(ip));

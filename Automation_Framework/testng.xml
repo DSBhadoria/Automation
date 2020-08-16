@@ -2,14 +2,16 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="TestSuite" thread-count="1" verbose="1" parallel="none">
 	
-	<parameter name="driverPath"
-		value="C:\\Users\\dhbhador\\Downloads\\Windows 7\\ZIP Files\\chromedriver_win32\\chromedriver.exe" />
 	<parameter name="excelFile" value="inputexcel"/>
-	
 	<test name="FlipkartE2E">
-		<parameter name="brower" value="chrome"/>
+		<parameter name="browser" value="chrome"/>
 		<classes>
-			<class name="com.dharam.flipkarttest.LoginSearhAddToCartBuyAndLogoutE2ETest"/>
+			<class name="com.dharam.flipkarttest.LoginSearhAddToCartBuyAndLogoutE2ETest">
+				<methods>
+					<include name="login"/>
+					<include name="logout"/>
+				</methods>
+			</class>
 		</classes>
 	</test>
 	

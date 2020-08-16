@@ -10,6 +10,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import com.dharam.logger.Log;
+
 public class ProductSearchPage {
 	
 	private WebDriver driver;
@@ -29,12 +31,14 @@ public class ProductSearchPage {
 		searchTextInputBox.click();
 		searchTextInputBox.sendKeys(product);
 		searchTextInputBox.sendKeys(Keys.ENTER);
+		Log.info(product + " searched.");
 	}
 	
 	public void randomlySelectTheProduct() {
-		int size = new Random().nextInt(productList.size());
-		WebElement randomWebElement = productList.get(size);
+		int random = new Random().nextInt(productList.size());
+		WebElement randomWebElement = productList.get(random);
 		((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView()", randomWebElement);
 		randomWebElement.click();
+		Log.info("Random Product selected.");
 	}
 }

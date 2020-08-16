@@ -2,6 +2,7 @@ package com.dharam.flipkart.pagefactory;
 
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -9,8 +10,11 @@ import org.openqa.selenium.support.FindBys;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
+import org.testng.Assert;
 
 import com.dharam.commons.GenericUtils;
+import com.dharam.datareader.ExcelUtil;
+import com.dharam.logger.Log;
 
 public class CheckoutPage {
 
@@ -94,10 +98,8 @@ public class CheckoutPage {
 	@FindBy(xpath="//*[text()='Other Banks']/following-sibling::*/select")
 	private WebElement netBankingSelectBanksDropdown;
 	
-	
-	
 	/**
-	 * @description Parametrized Constructor for initializing the 
+	 * @description Parameterized Constructor for initializing the 
 	 * WebElements of Checkout Page
 	 */
 	public CheckoutPage(final WebDriver driver) {
@@ -122,7 +124,7 @@ public class CheckoutPage {
 		GenericUtils.clickClearAndType(this.pincode, pincode);
 	}
 
-	public void enterLocatity(final String locality) {
+	public void enterLocality(final String locality) {
 		GenericUtils.clickClearAndType(this.locality, locality);
 	}
 
@@ -157,6 +159,40 @@ public class CheckoutPage {
 		});
 	}
 
+	public void fillAddressFormForProductDelivery(Workbook workBook, final String sheetName) {
+		String name = ExcelUtil.getSheetData(workBook, sheetName, "name");
+		enterName(name);
+
+		String mob = ExcelUtil.getSheetData(workBook, sheetName, "mobile");
+		enterMob(mob);
+
+		String pincode = ExcelUtil.getSheetData(workBook, sheetName, "pincode");
+		enterPincode(pincode);
+
+		String locality = ExcelUtil.getSheetData(workBook, sheetName, "locality");
+		enterLocality(locality);
+
+		String address = ExcelUtil.getSheetData(workBook, sheetName, "address");
+		enterAddress(address);
+
+		String city = ExcelUtil.getSheetData(workBook, sheetName, "city");
+		enterCityDistrictTown(city);
+
+		String state = ExcelUtil.getSheetData(workBook, sheetName, "state");
+		selectStateFromDropdown(state);
+
+		String landmark = ExcelUtil.getSheetData(workBook, sheetName, "landmark");
+		enterLandmark(landmark);
+
+		String alternatephone = ExcelUtil.getSheetData(workBook, sheetName, "alternatephone");
+		enterAlternatePhone(alternatephone);
+
+		String addresstype = ExcelUtil.getSheetData(workBook, sheetName, "addresstype");
+		selectAddressTypeRadioBtn(addresstype);
+		
+		Log.info("Delivery Address Form Filled.");
+	}
+	
 	public void clickOnSaveAndDeliverHereBtn() {
 		save_and_deliver_here.click();
 	}
@@ -167,6 +203,24 @@ public class CheckoutPage {
 	
 	public List<WebElement> getcheckedoutProductList() {
 		return checkedoutProductList;
+	}
+	
+	public void enterCardNumber(final String cardno) {
+		GenericUtils.clickClearAndType(cardNumber, cardno);
+	}
+	
+	public void selectMonthAndYearForCardDetails(final String month, final String year) {
+		GenericUtils.selectDropdownByValue(monthDropdown, month);
+		GenericUtils.selectDropdownByValue(yearDropdown, year);
+	}
+	
+	public void enterCVV(final String cvv) {
+		GenericUtils.clickClearAndType(city_disctrict_town, cvv);
+	}
+	
+	public void verifyPayBtnIsEnabledThenDoPayment() {
+		Assert.assertTrue(payBtn.isEnabled());
+		payBtn.click();
 	}
 }
 

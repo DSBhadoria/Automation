@@ -5,6 +5,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
 public class GenericUtils {
 	
@@ -20,5 +21,10 @@ public class GenericUtils {
 	
 	public static void scrollIntoView(final WebDriver driver, final WebElement ele) {
 		((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView()", ele);
+	}
+	
+	public static void selectDropdownByValue(WebElement dropDownLocator, final String value) {
+		Select dropdown = new Select(dropDownLocator);
+		dropdown.selectByValue(value);
 	}
 }
