@@ -12,6 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -39,7 +40,14 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest {
 
 	ExcelUtil excelObj;
 	Workbook workBook;
-
+	
+	@DataProvider(name = "UserDataProvider")
+	public static Object[][] getDataFromDataprovider() {
+		return new Object[][] { 
+			{ "xyz@gmail.com", "*******" }
+		};
+	}
+	
 	@BeforeClass
 	@Parameters({"excelFile", "browser"})
 	public void setUp(final String excelFile, final String browser) {
@@ -52,33 +60,38 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest {
 		}
 		driver = driverManager.getWebDriver();
 		driver.manage().deleteAllCookies();
+		driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
+		
 		excelObj = new ExcelUtil();
 		workBook = excelObj.getInputWorkBook(excelFile);
-
+		
 		String url = ExcelUtil.getSheetData(workBook, "credentials", "url");
 		driver.get(url);
-
+		
 		DOMConfigurator.configure("log4j.xml");
 		Log.startTestCase("Selenium_Test_001");
 	}
 
-	@Test
-	public void login() {
+	@Test(dataProvider = "UserDataProvider", groups= {"smoke", "regression"})
+	public void login(final String emailId, final String pswrd) {
 		flipKartLoginPage = new FlipkartLoginPage(driver);
 		flipKartLoginPage.openLoginPopUp();
-
+		
+		/*
 		String username = ExcelUtil.getSheetData(workBook, "credentials", "username");
 		flipKartLoginPage.enterUsername(username);
 
 		String password = ExcelUtil.getSheetData(workBook, "credentials", "password");
 		flipKartLoginPage.enterPassword(password);
-
+		 */
+		
+		flipKartLoginPage.enterUsername(emailId);
+		flipKartLoginPage.enterPassword(pswrd);
 		flipKartLoginPage.clickOnLoginBtn();
 	}
 
-	@Test(description = "Product Search and randomly select")
+	@Test(groups= {"regression"}, description = "Product Search and randomly select")
 	public void productSearch() {
 		String productName = ExcelUtil.getSheetData(workBook, "productinfo", "searchproduct");
 		productSearchScreenPage = new ProductSearchPage(driver);
@@ -87,7 +100,7 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest {
 		System.out.println(this.driver.getTitle());
 	}
 
-	@Test(description = "Add a product into a cart and place order.")
+	@Test(groups= {"regression"}, description = "Add a product into a cart and place order.")
 	public void addToCartAndPlaceOrder() {
 		ExcelUtil.updateExcel(workBook, "productinfo", "productname", 
 				productPage.getProductName().getText());
@@ -104,7 +117,7 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest {
 	}
 
 
-	@Test(description = "New Delivery Address Setup")
+	@Test(groups= {"regression"}, description = "New Delivery Address Setup")
 	public void setANewDeliveryAddress() {
 		checkoutPage = new CheckoutPage(driver);
 		checkoutPage.openNewAddressForm();
@@ -113,7 +126,7 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest {
 	}
 
 
-	@Test(description = "Verify the Added Product Details on the Checkeout Screen")
+	@Test(groups= {"regression"}, description = "Verify the Added Product Details on the Checkeout Screen")
 	public void verifyAddedProductDetailsOnCheckoutScreen() {
 		checkoutPage = new CheckoutPage(driver);
 		List<WebElement> cartProductList = checkoutPage.getcheckedoutProductList();
@@ -140,7 +153,7 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest {
 		}
 	}
 
-	@Test
+	@Test(groups= {"regression"})
 	public void paymentBasedOnThePaymentOption() {
 		checkoutPage = new CheckoutPage(driver);
 		checkoutPage.continueToPayment();
@@ -158,7 +171,7 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest {
 		checkoutPage.verifyPayBtnIsEnabledThenDoPayment();
 	}
 
-	@Test
+	@Test(groups= {"smoke", "regression"})
 	public void logout() {
 		flipKartLoginPage = new FlipkartLoginPage(driver);
 		flipKartLoginPage.logout();

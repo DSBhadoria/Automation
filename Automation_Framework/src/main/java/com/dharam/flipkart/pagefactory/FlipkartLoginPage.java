@@ -42,7 +42,7 @@ public class FlipkartLoginPage {
 	@FindBy(xpath="//*[contains(@class,'aUbKa') and not(text()='More')]")
 	private WebElement displayedUsername;
 	
-	@FindBys(value = { @FindBy(xpath="//*[contains(@class,'yG-R_')]//li/a") })
+	@FindBy(xpath="//*[contains(@class,'yG-R_')]//li/a[contains(text(),'Logout')]")
 	private WebElement logout;
 	
 	public FlipkartLoginPage(final WebDriver driver) {

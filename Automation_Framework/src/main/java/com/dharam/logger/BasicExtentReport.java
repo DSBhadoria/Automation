@@ -4,6 +4,7 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
 import com.aventstack.extentreports.ExtentReports;
@@ -17,12 +18,12 @@ import com.aventstack.extentreports.reporter.configuration.Theme;
 
 public class BasicExtentReport {
 	private ExtentHtmlReporter htmlReporter;
-	private ExtentReports extent;
-	private ExtentTest test;
-
-	@Parameters({"OS","browser"})
+	protected static ExtentReports extent;
+	protected static ExtentTest test;
+	
+	@Parameters({"browser"})
 	@BeforeTest
-	public void startReport(final String OS, final String browser) {
+	public void startReport(@Optional("Windows 7") final String OS, final String browser) {
 		htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") + "/test-output/testReport.html");
 		extent = new ExtentReports();
 
