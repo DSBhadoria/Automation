@@ -1,5 +1,8 @@
 package com.dharam.commons;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -26,5 +29,17 @@ public class GenericUtils {
 	public static void selectDropdownByValue(WebElement dropDownLocator, final String value) {
 		Select dropdown = new Select(dropDownLocator);
 		dropdown.selectByValue(value);
+	}
+	
+	public static void switchToNthWindow(final WebDriver driver, final int nthWindow) {
+		Set<String> windowHandler = driver.getWindowHandles();
+		Iterator<String> iterator = windowHandler.iterator();
+		for(int i=0; iterator.hasNext(); i++) {
+			if(i == nthWindow-1) {
+				driver.switchTo().window(iterator.next());
+				break;
+			}
+			iterator.next();
+		}
 	}
 }

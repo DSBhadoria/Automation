@@ -2,12 +2,13 @@ package com.dharam.flipkart.pagefactory;
 
 import java.util.List;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class ProductCartPage {
+import com.dharam.baseclass.TestBase;
+
+public class ProductCartPage extends TestBase {
 	
 	@FindBy(xpath="//*[text()='Place Order']/parent::*")
 	private WebElement placeOrderBtn;
@@ -19,11 +20,12 @@ public class ProductCartPage {
 		return cartProductList;
 	}
 
-	public ProductCartPage(final WebDriver driver) {
+	public ProductCartPage() {
 		PageFactory.initElements(driver, this);
 	}
 	
-	public void placeOrder() {
+	public CheckoutPage placeOrder() {
 		placeOrderBtn.click();
+		return new CheckoutPage();
 	}
-}
+};

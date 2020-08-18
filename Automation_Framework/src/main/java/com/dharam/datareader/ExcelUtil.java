@@ -48,9 +48,9 @@ public class ExcelUtil {
 	
 	/**
 	 * @author dhbhador
-	 * @return Cell Data based on the Excel, Sheet and the Column name
+	 * @return Cell data based on the Excel, Sheet and the Column name
 	 */
-	public static String getSheetData(Workbook book, String sheet, final String column) {
+	public static String getSheetData(Workbook book, final String sheet, final String column) {
 		Sheet sheetObj = book.getSheet(sheet);
 		Row row = sheetObj.getRow(0);
 		for(int i=0; i<row.getLastCellNum(); i++) {

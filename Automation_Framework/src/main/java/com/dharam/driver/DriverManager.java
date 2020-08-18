@@ -10,7 +10,7 @@ public abstract class DriverManager {
 	
 	public void closeWebDriver() {
 		if(this.driver != null) {
-			this.driver.close();
+			this.driver.quit();
 			this.driver = null;
 		}
 	}

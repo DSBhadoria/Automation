@@ -3,7 +3,6 @@ package com.dharam.flipkart.pagefactory;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.FindBys;
@@ -12,13 +11,12 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 
+import com.dharam.baseclass.TestBase;
 import com.dharam.commons.GenericUtils;
 import com.dharam.datareader.ExcelUtil;
 import com.dharam.logger.Log;
 
-public class CheckoutPage {
-
-	private WebDriver driver;
+public class CheckoutPage extends TestBase {
 
 	@FindBy(xpath="//*[text()='Add a new address']")
 	private WebElement addANewAddress;
@@ -102,8 +100,7 @@ public class CheckoutPage {
 	 * @description Parameterized Constructor for initializing the 
 	 * WebElements of Checkout Page
 	 */
-	public CheckoutPage(final WebDriver driver) {
-		this.driver = driver;
+	public CheckoutPage() {
 		PageFactory.initElements(driver, this); 
 	}
 
@@ -189,8 +186,6 @@ public class CheckoutPage {
 
 		String addresstype = ExcelUtil.getSheetData(workBook, sheetName, "addresstype");
 		selectAddressTypeRadioBtn(addresstype);
-		
-		Log.info("Delivery Address Form Filled.");
 	}
 	
 	public void clickOnSaveAndDeliverHereBtn() {
@@ -205,19 +200,18 @@ public class CheckoutPage {
 		return checkedoutProductList;
 	}
 	
-	public void enterCardNumber(final String cardno) {
-		GenericUtils.clickClearAndType(cardNumber, cardno);
-	}
 	
-	public void selectMonthAndYearForCardDetails(final String month, final String year) {
+	public boolean creditDebitATMCardPayment(final String cardno, final String month, final String year, final String cvv) {
+		GenericUtils.clickClearAndType(cardNumber, cardno);
 		GenericUtils.selectDropdownByValue(monthDropdown, month);
 		GenericUtils.selectDropdownByValue(yearDropdown, year);
-	}
-	
-	public void enterCVV(final String cvv) {
 		GenericUtils.clickClearAndType(city_disctrict_town, cvv);
+		return payBtn.isEnabled();
 	}
 	
+	/**
+	 * @description Payment Btn enability needs to be checked before clicking on it.
+	 */
 	public void verifyPayBtnIsEnabledThenDoPayment() {
 		Assert.assertTrue(payBtn.isEnabled());
 		payBtn.click();

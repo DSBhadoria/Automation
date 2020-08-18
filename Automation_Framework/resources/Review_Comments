@@ -1,0 +1,14 @@
+As discussed, please find some review points from the panel. If you can modify it should be helpful.
+Base class is not defined
+Driver initialization is complicated 
+createWebdriver() is empty
+Test data is incomplete
+Execution report not attached
+Code scalability/Reusability is very low
+Test case readability is low.
+OOPS is very minimal
+Asseertions are missing
+No comments are added 
+public void flush( ) - What's the use when we have an inbuilt method for close and quitting the browser?
+BeforeClass and AfterClass needs to handled in a better way for reusability
+Use of Final and Enum are good

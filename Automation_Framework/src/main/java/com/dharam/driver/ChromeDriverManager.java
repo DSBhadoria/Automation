@@ -17,6 +17,7 @@ public class ChromeDriverManager extends DriverManager {
 	@Override
 	protected void createWebdriver() {
 		System.setProperty("webdriver.chrome.driver", rootDir + "\\drivers\\chromedriver.exe");
+//        WebDriverManager.chromedriver().arch64().setup();
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("start-maximized");
 		this.driver = new ChromeDriver(options);

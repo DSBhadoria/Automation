@@ -1,9 +1,7 @@
 package com.dharam.flipkart.pagefactory;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.CacheLookup;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.FindBys;
 import org.openqa.selenium.support.How;
@@ -11,17 +9,16 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.dharam.baseclass.TestBase;
 import com.dharam.logger.Log;
 
-public class FlipkartLoginPage {
-	
-	private WebDriver driver;
+public class LoginPage extends TestBase {
 	
 	@FindBy(how=How.LINK_TEXT, using="Login")
 	private WebElement loginLink;
 	
 	@FindBy(className="mCRfo9")
-	@CacheLookup
+//	@CacheLookup
 	private WebElement loginPopup;
 	
 	@FindBys({
@@ -30,13 +27,13 @@ public class FlipkartLoginPage {
 	})
 	private WebElement closePopup;
 	
-	@FindBy(xpath="//input[@type='text']")
+	@FindBy(xpath="//input[contains(@class,'dBPDZ') and @type='text']")
 	private WebElement username;
 	
 	@FindBy(xpath="//input[@type='password']")
 	private WebElement password;
 	
-	@FindBy(xpath="//button[@type='submit']")
+	@FindBy(xpath="//button[@type='submit' and (contains(@class,'AkmmA') or contains(@class,'UHT_c'))]")
 	private WebElement loginBtn;
 	
 	@FindBy(xpath="//*[contains(@class,'aUbKa') and not(text()='More')]")
@@ -45,8 +42,7 @@ public class FlipkartLoginPage {
 	@FindBy(xpath="//*[contains(@class,'yG-R_')]//li/a[contains(text(),'Logout')]")
 	private WebElement logout;
 	
-	public FlipkartLoginPage(final WebDriver driver) {
-		this.driver = driver;
+	public LoginPage() {
 		PageFactory.initElements(driver, this);
 	}
 	
@@ -55,19 +51,23 @@ public class FlipkartLoginPage {
 		Log.info("Login Popup Opened.");
 	}
 	
-	public void enterUsername(final String userName) {
+	public ProductSearchPage login(String userName, String password){
+		/*
+		GenericUtils.clickClearAndType(this.username, userName);
+		GenericUtils.clickClearAndType(this.password, password);
+		*/
 		this.username.sendKeys(userName);
-		Log.info("Username typed into the login Form.");
-	}
-	
-	public void enterPassword(final String password) {
 		this.password.sendKeys(password);
-		Log.info("Password typed into the login Form.");
+		this.loginBtn.click();
+		return new ProductSearchPage();
 	}
 	
-	public void clickOnLoginBtn() {
-		this.loginBtn.click();
-		Log.info("Logged in.");
+	public String validateLoginPageTitle(){
+		return driver.getTitle();
+	}
+	
+	public boolean validateUsernameDisplayed() {
+		return displayedUsername.isDisplayed();
 	}
 	
 	public void logout() {

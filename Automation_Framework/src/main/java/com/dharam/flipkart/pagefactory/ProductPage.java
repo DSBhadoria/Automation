@@ -1,13 +1,12 @@
 package com.dharam.flipkart.pagefactory;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class ProductPage {
-	
-	private WebDriver driver;
+import com.dharam.baseclass.TestBase;
+
+public class ProductPage extends TestBase {
 	
 	@FindBy(xpath="//h1/*")
 	private WebElement productName;
@@ -21,8 +20,7 @@ public class ProductPage {
 	@FindBy(xpath="//button[text()='ADD TO CART']")
 	private WebElement addToCartBtn;
 	
-	public ProductPage(final WebDriver driver) {
-		this.driver = driver;
+	public ProductPage() {
 		PageFactory.initElements(driver, this);
 	}
 
