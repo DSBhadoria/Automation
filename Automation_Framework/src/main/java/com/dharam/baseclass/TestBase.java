@@ -22,24 +22,24 @@ import com.dharam.utils.WebEventListener;
 
 /**
  * @author dhbhador
- * @description Base Class that includes common methods, 
- * that can be reused, by extending this Class. 
+ * @description Base Class that includes common methods, that can be reused, by
+ *              extending this Class.
  */
-public class TestBase {
-	
+abstract public class TestBase {
+
 	protected static WebDriver driver;
 	public static Properties prop;
 	protected static EventFiringWebDriver e_driver;
 	protected static WebEventListener eventListener;
-	
+
 	public TestBase() {
-		if(prop == null) {
+		if (prop == null) {
 			loadPropertyFile();
 		}
 	}
-	
+
 	private static final String CONFIG_PATH = "/resources/config.properties";
-	
+
 	/**
 	 * @author dhbhador
 	 * @description Loading the config.prperties file.
@@ -56,51 +56,53 @@ public class TestBase {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected static Workbook workBook;
 	protected ExcelUtil excelUtil;
-	
+
 	public static final String rootDir = System.getProperty("user.dir");
-	
+
 	/**
 	 * @author dhbhador
 	 * @param browser
-	 * @description Initializing the Webdriver Instance, Deleting the Cookies, 
-	 * EventListerHandler registering it with EventFiringWebDriver and Configuring the log4j.xml.
+	 * @description Initializing the Webdriver Instance, Deleting the Cookies,
+	 *              Registering EventListerHandler with the EventFiringWebDriver and
+	 *              Configuring the log4j.xml.
 	 */
 	@SuppressWarnings("deprecation")
 	public void initialize(final String browser) {
 		System.out.println(DriverType.CHROME.toString());
-		if(browser.equalsIgnoreCase("chrome")) {
-			System.setProperty("webdriver.chrome.driver", rootDir + "\\drivers\\chromedriver.exe");	
+		if (browser.equalsIgnoreCase("chrome")) {
+			System.setProperty("webdriver.chrome.driver", rootDir + "\\drivers\\chromedriver.exe");
 			driver = new ChromeDriver();
-		} else if(browser.equalsIgnoreCase("firefox")) {
-			System.setProperty("webdriver.gecko.driver", rootDir + "\\drivers\\geckodriver.exe" );	
-			driver = new FirefoxDriver(); 
+		} else if (browser.equalsIgnoreCase("firefox")) {
+			System.setProperty("webdriver.gecko.driver", rootDir + "\\drivers\\geckodriver.exe");
+			driver = new FirefoxDriver();
 		} else {
 			DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
-			capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,true);
+			capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
 			System.setProperty("webdriver.ie.driver", rootDir + "\\drivers\\IEDriverServer_32.exe");
-			driver = new InternetExplorerDriver(capabilities); 
+			driver = new InternetExplorerDriver(capabilities);
 		}
-		
+
 		e_driver = new EventFiringWebDriver(driver);
-		// Now create object of EventListerHandler to register it with EventFiringWebDriver
+		// Now create object of EventListerHandler to register it with
+		// EventFiringWebDriver
 		eventListener = new WebEventListener();
 		e_driver.register(eventListener);
 		driver = e_driver;
-		
+
 		driver.manage().deleteAllCookies();
-		driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
+		driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-		
+
 		String url = prop.getProperty("url");
-		driver.get(url);
-		
+		driver.navigate().to(url);
+
 		DOMConfigurator.configure("log4j.xml");
-		
+
 		excelUtil = new ExcelUtil();
 		workBook = excelUtil.getInputWorkBook("inputexcel");
 	}
-	
+
 }

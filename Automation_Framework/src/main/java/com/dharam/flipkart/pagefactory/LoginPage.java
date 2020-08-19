@@ -13,66 +13,66 @@ import com.dharam.baseclass.TestBase;
 import com.dharam.logger.Log;
 
 public class LoginPage extends TestBase {
-	
-	@FindBy(how=How.LINK_TEXT, using="Login")
+
+	@FindBy(how = How.LINK_TEXT, using = "Login")
 	private WebElement loginLink;
-	
-	@FindBy(className="mCRfo9")
-//	@CacheLookup
+
+	@FindBy(className = "mCRfo9")
+	// @CacheLookup
 	private WebElement loginPopup;
-	
-	@FindBys({
-		@FindBy(tagName="button"),
-		@FindBy(xpath="//*[text()=\"✕\"]")
-	})
+
+	@FindBys({ @FindBy(tagName = "button"), @FindBy(xpath = "//*[text()=\"✕\"]") })
 	private WebElement closePopup;
-	
-	@FindBy(xpath="//input[contains(@class,'dBPDZ') and @type='text']")
+
+	@FindBy(xpath = "//input[contains(@class,'dBPDZ') and @type='text']")
 	private WebElement username;
-	
-	@FindBy(xpath="//input[@type='password']")
+
+	@FindBy(xpath = "//input[@type='password']")
 	private WebElement password;
-	
-	@FindBy(xpath="//button[@type='submit' and (contains(@class,'AkmmA') or contains(@class,'UHT_c'))]")
+
+	@FindBy(xpath = "//button[@type='submit' and (contains(@class,'AkmmA') or contains(@class,'UHT_c'))]")
 	private WebElement loginBtn;
-	
-	@FindBy(xpath="//*[contains(@class,'aUbKa') and not(text()='More')]")
+
+	@FindBy(xpath = "//*[contains(@class,'aUbKa') and not(text()='More')]")
 	private WebElement displayedUsername;
-	
-	@FindBy(xpath="//*[contains(@class,'yG-R_')]//li/a[contains(text(),'Logout')]")
+
+	@FindBy(xpath = "//*[contains(@class,'yG-R_')]//li/a[contains(text(),'Logout')]")
 	private WebElement logout;
-	
+
 	public LoginPage() {
 		PageFactory.initElements(driver, this);
 	}
-	
+
+	// During Automation this Pop-up comes automatically, so throws exception.
 	public void openLoginPopUp() {
-		this.loginLink.click();
-		Log.info("Login Popup Opened.");
+		try {
+			this.loginLink.click();
+			Log.info("Login Popup Opened By Clicking.");
+		} catch (Exception e) {
+			Log.warn(e.getMessage() + " : Login Pop-up Opened Automatically.");
+		}
 	}
-	
-	public ProductSearchPage login(String userName, String password){
+
+	public ProductSearchPage login(String userName, String password) {
 		this.username.sendKeys(userName);
 		this.password.sendKeys(password);
 		this.loginBtn.click();
 		return new ProductSearchPage();
 	}
-	
-	public String validateLoginPageTitle(){
+
+	public String validateLoginPageTitle() {
 		return driver.getTitle();
 	}
-	
+
 	public boolean validateUsernameDisplayed() {
 		return displayedUsername.isDisplayed();
 	}
-	
+
 	public void logout() {
 		Actions action = new Actions(driver);
-		action.moveToElement(displayedUsername)
-		.moveToElement(logout)
-		.click().build().perform();
+		action.moveToElement(displayedUsername).moveToElement(logout).click().build().perform();
 		new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOf(loginBtn));
 		Log.info("Logged out from the flipkart.");
 	}
-	
+
 }

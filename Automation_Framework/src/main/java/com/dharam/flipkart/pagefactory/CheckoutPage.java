@@ -3,6 +3,7 @@ package com.dharam.flipkart.pagefactory;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.FindBys;
@@ -17,93 +18,91 @@ import com.dharam.utils.GenericUtils;
 
 public class CheckoutPage extends TestBase {
 
-	@FindBy(xpath="//*[text()='Add a new address']")
+	@FindBy(xpath = "//*[text()='Add a new address']")
 	private WebElement addANewAddress;
 
-	@FindBy(name="name")
+	@FindBy(name = "name")
 	private WebElement name;
 
-	@FindBy(name="phone")
+	@FindBy(name = "phone")
 	private WebElement mob;
 
-	@FindBy(name="pincode")
+	@FindBy(name = "pincode")
 	private WebElement pincode;
 
-	@FindBy(name="addressLine2")
+	@FindBy(name = "addressLine2")
 	private WebElement locality;
 
-	@FindBy(name="addressLine1")
+	@FindBy(name = "addressLine1")
 	private WebElement address;
 
-	@FindBy(name="city")
+	@FindBy(name = "city")
 	private WebElement city_disctrict_town;
 
-	@FindBy(name="state")
+	@FindBy(name = "state")
 	private WebElement state;
 
-	@FindBy(name="landmark")
+	@FindBy(name = "landmark")
 	private WebElement landmark_optional;
 
-	@FindBy(name="alternatePhone")
+	@FindBy(name = "alternatePhone")
 	private WebElement alternate_phone_no_optional;
 
-	@FindBy(xpath="//*[@name='locationTypeTag']/..")
+	@FindBy(xpath = "//*[@name='locationTypeTag']/..")
 	private List<WebElement> address_type;
 
-	@FindBys({
-		@FindBy(tagName="button"),
-		@FindBy(how=How.XPATH, using="//*[contains(text(),'Deliver Here')]")}
-			)
+	@FindBys({ @FindBy(tagName = "button"), @FindBy(how = How.XPATH, using = "//*[contains(text(),'Deliver Here')]") })
 	private WebElement save_and_deliver_here;
-	
-	@FindBy(className="PaJLWc")
+
+	@FindBy(className = "PaJLWc")
 	private List<WebElement> checkedoutProductList;
-	
-	@FindBy(id="to-payment")
+
+	@FindBy(id = "to-payment")
 	private WebElement continueToPayement;
-	
-	@FindBy(id="UPI")
+
+	@FindBy(id = "UPI")
 	private WebElement upiParentPayment;
-	
-	@FindBy(id="PHONEPE")
+
+	@FindBy(id = "PHONEPE")
 	private WebElement phonepe;
-	
-	@FindBy(id="UPI_COLLECT")
+
+	@FindBy(id = "UPI_COLLECT")
 	private WebElement upiCollect;
-	
-	@FindBy(id="CREDIT")
+
+	@FindBy(id = "CREDIT")
 	private WebElement creditDebitATMPayment;
-	
-	@FindBy(name="cardNumber")
+
+	@FindBy(name = "cardNumber")
 	private WebElement cardNumber;
-	
-	@FindBy(name="month")
+
+	@FindBy(name = "month")
 	private WebElement monthDropdown;
-	
-	@FindBy(id="year")
+
+	@FindBy(id = "year")
 	private WebElement yearDropdown;
-	
-	@FindBy(xpath="//*[contains(text(),'PAY') and @type='button']")
+
+	@FindBy(xpath = "//*[contains(text(),'PAY') and @type='button']")
 	private WebElement payBtn;
-	
-	@FindBy(id="NET_OPTIONS")
+
+	@FindBy(id = "NET_OPTIONS")
 	private WebElement netBanking;
-	
-	@FindBy(name="netBanking")
+
+	@FindBy(name = "netBanking")
 	private WebElement popularBanks;
-	
-	@FindBy(xpath="//*[text()='Other Banks']/following-sibling::*/select")
+
+	@FindBy(xpath = "//*[text()='Other Banks']/following-sibling::*/select")
 	private WebElement netBankingSelectBanksDropdown;
-	
+
 	/**
-	 * @description Parameterized Constructor for initializing the 
-	 * WebElements of Checkout Page
+	 * @description Parameterized Constructor for initializing the WebElements of
+	 *              Checkout Page
 	 */
 	public CheckoutPage() {
-		PageFactory.initElements(driver, this); 
+		PageFactory.initElements(driver, this);
 	}
 
 	public void openNewAddressForm() {
+		GenericUtils.webdriverWaitUntilElementIsClickable(addANewAddress);
 		GenericUtils.scrollIntoView(driver, addANewAddress);
 		addANewAddress.click();
 	}
@@ -145,9 +144,12 @@ public class CheckoutPage extends TestBase {
 		GenericUtils.clickClearAndType(alternate_phone_no_optional, alternatemob);
 	}
 
+	/**
+	 * @Description Address Type Selection - Home or Office
+	 */
 	public void selectAddressTypeRadioBtn(final String addressType) {
 		address_type.forEach(homeOrWorkAddress -> {
-			if(homeOrWorkAddress.getAttribute("for").equalsIgnoreCase(addressType)) {
+			if (homeOrWorkAddress.getAttribute("for").equalsIgnoreCase(addressType)) {
 				GenericUtils.scrollIntoView(driver, homeOrWorkAddress);
 				homeOrWorkAddress.click();
 				return;
@@ -155,6 +157,9 @@ public class CheckoutPage extends TestBase {
 		});
 	}
 
+	/**
+	 * @Desciption Fill the Mew Address Details for the Product Delivery.
+	 */
 	public void fillAddressFormForProductDelivery(Workbook workBook, final String sheetName) {
 		String name = ExcelUtil.getSheetData(workBook, sheetName, "name");
 		enterName(name);
@@ -186,28 +191,74 @@ public class CheckoutPage extends TestBase {
 		String addresstype = ExcelUtil.getSheetData(workBook, sheetName, "addresstype");
 		selectAddressTypeRadioBtn(addresstype);
 	}
-	
+
 	public void clickOnSaveAndDeliverHereBtn() {
 		save_and_deliver_here.click();
 	}
-	
+
 	public void continueToPayment() {
 		continueToPayement.click();
 	}
-	
+
 	public List<WebElement> getcheckedoutProductList() {
 		return checkedoutProductList;
 	}
-	
-	
-	public boolean creditDebitATMCardPayment(final String cardno, final String month, final String year, final String cvv) {
+
+	/**
+	 * @Description Payment Details for Card Payment Method.
+	 */
+	public boolean creditDebitATMCardPayment(final String cardno, final String month, final String year,
+			final String cvv) {
 		GenericUtils.clickClearAndType(cardNumber, cardno);
 		GenericUtils.selectDropdownByValue(monthDropdown, month);
 		GenericUtils.selectDropdownByValue(yearDropdown, year);
 		GenericUtils.clickClearAndType(city_disctrict_town, cvv);
 		return payBtn.isEnabled();
 	}
-	
+
+	/**
+	 * @Description Payment based on the Payment Type Method.
+	 */
+	public boolean paymentForThePurchase() {
+		String paymentType = ExcelUtil.getSheetData(workBook, "payment", "paymenttype");
+		Boolean payBtnEnabled = false;
+		if (paymentType.equalsIgnoreCase("card")) {
+			String cardnumber = ExcelUtil.getSheetData(workBook, "payment", "card_number");
+			String month = ExcelUtil.getSheetData(workBook, "payment", "mm");
+			String year = ExcelUtil.getSheetData(workBook, "payment", "yy");
+			payBtnEnabled = creditDebitATMCardPayment(cardnumber, month, year, "***");
+		}
+		return payBtnEnabled;
+	}
+
+	/**
+	 * @Description Verify the Added Product Details on the Checkeout Screen.
+	 */
+	public boolean verifyAddedProductDetailsOnCheckoutScreen() {
+		List<WebElement> cartProductList = getcheckedoutProductList();
+		String productNameXpath = "child::*[contains(@class,'vIvU_')]/*[1]";
+		String productPriceXpath = "*[contains(@class,'vZa')]";
+		String expectedProductName = ExcelUtil.getSheetData(workBook, "productinfo", "productName");
+		String expectedProductPrice = ExcelUtil.getSheetData(workBook, "productinfo", "productprice");
+
+		boolean productPresent = false;
+		for (int i = 0; i < cartProductList.size(); i++) {
+
+			WebElement actualProduct = cartProductList.get(i);
+			String productName = actualProduct.findElement(By.xpath(productNameXpath)).getText();
+
+			if (productName.contains(expectedProductName)) {
+				// Assert.assertEquals(productName, expectedProductName);
+				String productPrice = actualProduct.findElement(By.xpath(productPriceXpath)).getText();
+				Assert.assertEquals(productPrice, expectedProductPrice);
+				productPresent = true;
+				break;
+			}
+		}
+
+		return productPresent;
+	}
+
 	/**
 	 * @description Payment Btn enability needs to be checked before clicking on it.
 	 */
@@ -216,4 +267,3 @@ public class CheckoutPage extends TestBase {
 		payBtn.click();
 	}
 }
-

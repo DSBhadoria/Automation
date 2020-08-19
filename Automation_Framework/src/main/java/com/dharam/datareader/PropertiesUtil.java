@@ -7,16 +7,16 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertiesUtil {
-	
+
 	private static Properties propertyObj = null;
-	
+
 	public static Properties getPropertyObj(final String filePath) {
-		if(propertyObj == null) {
+		if (propertyObj == null) {
 			loadPropertyFile(filePath);
 		}
 		return propertyObj;
 	}
-	
+
 	public static void loadPropertyFile(final String filePath) {
 		try {
 			String propertyFilePath = System.getProperty("user.dir") + filePath;

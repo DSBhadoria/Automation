@@ -8,36 +8,45 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dharam.baseclass.TestBase;
+import com.dharam.datareader.ExcelUtil;
+import com.dharam.logger.Log;
+import com.dharam.utils.GenericUtils;
 
 public class ProductSearchPage extends TestBase {
-	
-	@FindBy(xpath="//*[contains(@class,'header-form-search')]//*[@type='text']")
+
+	@FindBy(xpath = "//*[contains(@class,'header-form-search')]//*[@type='text']")
 	private WebElement searchTextInputBox;
-	
-	@FindBy(xpath="//*[@class='_3O0U0u']/*")
+
+	@FindBy(xpath = "//*[@class='_3O0U0u']/*")
 	private List<WebElement> productList;
 
 	public ProductSearchPage() {
 		PageFactory.initElements(driver, this);
 	}
-	
+
 	public List<WebElement> getProductList() {
 		return productList;
 	}
-	
-	public void productSearch(final String product) {
+
+	public void productSearch() {
+		String productName = ExcelUtil.getSheetData(workBook, "productinfo", "searchproduct");
 		searchTextInputBox.click();
-		searchTextInputBox.sendKeys(product);
+		searchTextInputBox.sendKeys(productName);
 		searchTextInputBox.sendKeys(Keys.ENTER);
+		Log.info(productName + " searched.");
+		new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOfAllElements(getProductList()));
 	}
-	
+
 	public ProductPage randomlySelectTheProduct() {
 		int random = new Random().nextInt(productList.size());
 		WebElement randomWebElement = productList.get(random);
-		((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView()", randomWebElement);
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView()", randomWebElement);
 		randomWebElement.click();
+		GenericUtils.switchToNthWindow(driver, driver.getWindowHandles().size());
 		return new ProductPage();
 	}
 }
