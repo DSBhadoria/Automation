@@ -10,11 +10,15 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.events.EventFiringWebDriver;
 
 import com.dharam.datareader.ExcelUtil;
-import com.dharam.driver.DriverManager;
-import com.dharam.driver.DriverManagerFactory;
 import com.dharam.enums.DriverType;
+import com.dharam.utils.WebEventListener;
 
 /**
  * @author dhbhador
@@ -24,9 +28,9 @@ import com.dharam.enums.DriverType;
 public class TestBase {
 	
 	protected static WebDriver driver;
-	protected static Properties prop;
-	protected static ExcelUtil excelObj;
-	protected static Workbook workBook;
+	public static Properties prop;
+	protected static EventFiringWebDriver e_driver;
+	protected static WebEventListener eventListener;
 	
 	public TestBase() {
 		if(prop == null) {
@@ -53,41 +57,50 @@ public class TestBase {
 		}
 	}
 	
-	private DriverManager driverManager;
+	protected static Workbook workBook;
+	protected ExcelUtil excelUtil;
+	
+	public static final String rootDir = System.getProperty("user.dir");
+	
 	/**
 	 * @author dhbhador
 	 * @param browser
-	 * @description Initializing the Webdriver Instance, Deleting the Cookied and 
-	 * Configuring the log4j.xml.
+	 * @description Initializing the Webdriver Instance, Deleting the Cookies, 
+	 * EventListerHandler registering it with EventFiringWebDriver and Configuring the log4j.xml.
 	 */
+	@SuppressWarnings("deprecation")
 	public void initialize(final String browser) {
+		System.out.println(DriverType.CHROME.toString());
 		if(browser.equalsIgnoreCase("chrome")) {
-			driverManager = DriverManagerFactory.getDriverManager(DriverType.CHROME);
+			System.setProperty("webdriver.chrome.driver", rootDir + "\\drivers\\chromedriver.exe");	
+			driver = new ChromeDriver();
 		} else if(browser.equalsIgnoreCase("firefox")) {
-			driverManager = DriverManagerFactory.getDriverManager(DriverType.FIREFOX);
+			System.setProperty("webdriver.gecko.driver", rootDir + "\\drivers\\geckodriver.exe" );	
+			driver = new FirefoxDriver(); 
 		} else {
-			driverManager = DriverManagerFactory.getDriverManager(DriverType.IE);
+			DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
+			capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,true);
+			System.setProperty("webdriver.ie.driver", rootDir + "\\drivers\\IEDriverServer_32.exe");
+			driver = new InternetExplorerDriver(capabilities); 
 		}
 		
-		driver = driverManager.getWebDriver();
+		e_driver = new EventFiringWebDriver(driver);
+		// Now create object of EventListerHandler to register it with EventFiringWebDriver
+		eventListener = new WebEventListener();
+		e_driver.register(eventListener);
+		driver = e_driver;
 		
 		driver.manage().deleteAllCookies();
 		driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		
-		excelObj = new ExcelUtil();
-		workBook = excelObj.getInputWorkBook(prop.getProperty("inputexcel"));
+		String url = prop.getProperty("url");
+		driver.get(url);
 		
 		DOMConfigurator.configure("log4j.xml");
+		
+		excelUtil = new ExcelUtil();
+		workBook = excelUtil.getInputWorkBook("inputexcel");
 	}
 	
-	/**
-	 * @author dhbhador
-	 * @description Flushing the Drivers executables from the process, if present.
-	 */
-	public void flush() throws IOException {
-		Runtime.getRuntime().exec("TASKKILL /F /IM chromedriver.exe");
-		Runtime.getRuntime().exec("TASKKILL /F /IM geckodriver.exe");
-		Runtime.getRuntime().exec("TASKKILL /F /IM IEDriverServer_32.exe");
-	}
 }

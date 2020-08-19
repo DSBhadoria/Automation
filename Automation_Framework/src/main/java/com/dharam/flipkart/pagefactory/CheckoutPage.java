@@ -12,9 +12,8 @@ import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 
 import com.dharam.baseclass.TestBase;
-import com.dharam.commons.GenericUtils;
 import com.dharam.datareader.ExcelUtil;
-import com.dharam.logger.Log;
+import com.dharam.utils.GenericUtils;
 
 public class CheckoutPage extends TestBase {
 

@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="TestSuite" thread-count="1" verbose="1" parallel="none">
+	
+	<listeners>
+			<listener class-name="com.dharam.logger.ExtentReporterNG" />
+	</listeners>
+	
 	<test name="FlipkartE2E">
 		<parameter name="browser" value="chrome"/>
 		<classes>
 			<class name="com.dharam.flipkarttest.LoginSearhAddToCartBuyAndLogoutE2ETest">
 				<methods>
-					<include name="launch"/>
 					<include name="login"/>
 					<include name="productSearch"/>
+					<include name="addToCartAndPlaceOrder"/>
 				</methods>
 			</class>
 		</classes>

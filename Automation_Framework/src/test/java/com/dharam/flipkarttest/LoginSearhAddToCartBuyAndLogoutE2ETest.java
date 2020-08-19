@@ -15,7 +15,6 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.dharam.baseclass.TestBase;
-import com.dharam.commons.GenericUtils;
 import com.dharam.datareader.ExcelUtil;
 import com.dharam.flipkart.pagefactory.CheckoutPage;
 import com.dharam.flipkart.pagefactory.LoginPage;
@@ -23,6 +22,7 @@ import com.dharam.flipkart.pagefactory.ProductCartPage;
 import com.dharam.flipkart.pagefactory.ProductPage;
 import com.dharam.flipkart.pagefactory.ProductSearchPage;
 import com.dharam.logger.Log;
+import com.dharam.utils.GenericUtils;
 
 public class LoginSearhAddToCartBuyAndLogoutE2ETest extends TestBase {
 
@@ -31,16 +31,16 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest extends TestBase {
 	ProductPage productPage;
 	ProductCartPage productCartPage;
 	CheckoutPage checkoutPage;
-
+	
+	private String sheetName = "products";
+	
 	LoginSearhAddToCartBuyAndLogoutE2ETest() {
 		super();
 	}
 	
-	@DataProvider(name = "UserDataProvider")
-	public static Object[][] getDataFromDataprovider() {
-		return new Object[][] { 
-			{"xyz@gmail.com", "*******"}
-		};
+	@DataProvider(name = "TestDataProvider")
+	public Object[][] getDataFromDataprovider() {
+		return GenericUtils.getTestData(sheetName);
 	}
 	
 	/**
@@ -50,28 +50,20 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest extends TestBase {
 	@Parameters({"browser"})
 	public void setUp(final String browser) {
 		initialize(browser);
-		Log.startTestCase("Selenium_Test_001 - Flipkart Purchase.");
-	}
-	
-	/**
-	 * @Description Launching the Url and Asserting the Launched - Page Title.
-	 */
-	@Test(alwaysRun=true, priority=1)
-	public void launch() {
-		String url = prop.getProperty("url");
-		driver.get(url);
 		flipKartLoginPage = new LoginPage();
-		String title = flipKartLoginPage.validateLoginPageTitle();
-		Assert.assertEquals(title, 
-				"Online Shopping Site for Mobiles, Electronics, Furniture, Grocery, Lifestyle, Books & More. Best Offers!");
-		Log.info("Url = '" + url + "' Launched successfully.");
+		Log.startTestCase("Selenium_Test_001 - Flipkart Purchase.");
 	}
 	
 	/**
 	 * @Decription Login into the Application.
 	 */
-	@Test(alwaysRun=true, groups= {"smoke", "regression"}, priority=2)
+	@Test(alwaysRun=true, groups= {"smoke", "regression"}, priority=1)
 	public void login() {
+		String title = flipKartLoginPage.validateLoginPageTitle();
+		Assert.assertEquals(title, 
+				"Online Shopping Site for Mobiles, Electronics, Furniture, Grocery, Lifestyle, Books & More. Best Offers!");
+		Log.info("Url = '" + prop.getProperty("url") + "' Launched successfully.");
+		
 		// During Automation this Pop-up comes automatically, so throws exception.
 		try {
 			flipKartLoginPage.openLoginPopUp();
@@ -83,7 +75,6 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest extends TestBase {
 		String username = prop.getProperty("username");
 		String password = prop.getProperty("password");
 		productSearchScreenPage = flipKartLoginPage.login(username, password);
-		
 		Assert.assertTrue(flipKartLoginPage.validateUsernameDisplayed(), "Not Logged-in Successfully.");
 		Log.info("Logged-in Successfully.");
 	}
@@ -92,10 +83,10 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest extends TestBase {
 	 * @Description Product searched and randomly selected from the list displayed.
 	 * And also driver control switched to the new TAB - Newly Opened Product Page.
 	 */
-	@Test(groups= {"regression"}, description = "Product Search and randomly select")
+	@Test(groups= {"regression"}, description = "Product Search and randomly select", priority=2)
 	public void productSearch() {
-//		String productName = ExcelUtil.getSheetData(workBook, "productinfo", "searchproduct");
-		String productName = "camera";
+		String productName = ExcelUtil.getSheetData(workBook, "productinfo", "searchproduct");
+//		String productName = "camera";
 		productSearchScreenPage.productSearch(productName);
 		
 		WebDriverWait wait = new WebDriverWait(driver, 5);
@@ -114,7 +105,7 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest extends TestBase {
 	/**
 	 * @Decription Product Added to the Cart.
 	 */
-	@Test(groups= {"regression"}, description = "Add a product into a cart and place order.")
+	@Test(groups= {"regression"}, description = "Add a product into a cart and place order.", priority=3)
 	public void addToCartAndPlaceOrder() {
 		ExcelUtil.updateExcel(workBook, "productinfo", "productname", 
 				productPage.getProductName().getText());
@@ -122,15 +113,17 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest extends TestBase {
 				productPage.getProductPrice().getText());
 		ExcelUtil.updateExcel(workBook, "productinfo", "productdescription", 
 				productPage.getProductDescription().getText());
-		productPage.addProductToCart();
-		productCartPage = new ProductCartPage();
+
+		productCartPage = productPage.addProductToCart();
+		Assert.assertTrue(productCartPage.getCartProductList().size()>0);
+		
 		checkoutPage = productCartPage.placeOrder();
 		
 		Log.info("Random Product Added to the Cart.");
 	}
 
 
-	@Test(groups= {"regression"}, description = "New Delivery Address Setup")
+	@Test(groups= {"regression"}, description = "New Delivery Address Setup", priority=4)
 	public void setANewDeliveryAddress() {
 		checkoutPage.openNewAddressForm();
 		
@@ -142,7 +135,7 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest extends TestBase {
 	}
 
 
-	@Test(groups= {"regression"}, description = "Verify the Added Product Details on the Checkeout Screen")
+	@Test(groups= {"regression"}, description = "Verify the Added Product Details on the Checkeout Screen", priority=5)
 	public void verifyAddedProductDetailsOnCheckoutScreen() {
 		List<WebElement> cartProductList = checkoutPage.getcheckedoutProductList();
 		String productNameXpath = "child::*[contains(@class,'vIvU_')]/*[1]";
@@ -165,13 +158,17 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest extends TestBase {
 				break;
 			}
 		}
+		
+		if(!productPresent) {
+			Assert.assertFalse(true,"Product Not Found On the Checkout Screen.");
+		}
 	}
 	
 	/**
 	 * @Desctiption More Options can be added for the Payment 
 	 * but as of now only Card Payment added.
 	 */
-	@Test(groups= {"regression"})
+	@Test(groups= {"regression"}, priority=6)
 	public void paymentBasedOnThePaymentOption() {
 		checkoutPage.continueToPayment();
 		String paymentType = ExcelUtil.getSheetData(workBook, "payment", "paymenttype");
@@ -187,18 +184,14 @@ public class LoginSearhAddToCartBuyAndLogoutE2ETest extends TestBase {
 		checkoutPage.verifyPayBtnIsEnabledThenDoPayment();
 	}
 	
-	@Test(groups= {"smoke", "regression"})
-	public void logout() {
+	@AfterClass
+	public void tearDown() throws IOException {
 		String title = driver.getTitle();
 		flipKartLoginPage.logout();
 		Assert.assertNotEquals(title, 
 				"Online Shopping Site for Mobiles, Electronics, Furniture, Grocery, Lifestyle, Books & More. Best Offers!");
 		driver.close();
-	}
-	
-	@AfterClass(alwaysRun=true)
-	public void tearDown() throws IOException {
-		flush();
+		GenericUtils.flush();
 		Log.endTestCase("Selenium_Test_001");
 	}
 }

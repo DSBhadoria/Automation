@@ -52,10 +52,6 @@ public class LoginPage extends TestBase {
 	}
 	
 	public ProductSearchPage login(String userName, String password){
-		/*
-		GenericUtils.clickClearAndType(this.username, userName);
-		GenericUtils.clickClearAndType(this.password, password);
-		*/
 		this.username.sendKeys(userName);
 		this.password.sendKeys(password);
 		this.loginBtn.click();

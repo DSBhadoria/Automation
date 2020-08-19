@@ -10,19 +10,21 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.dharam.baseclass.TestBase;
+
 /**
  * @author dhbhador
  */
 public class ExcelUtil {
 	
-	private Workbook inputWorkBook = null;
+	public static Workbook inputWorkBook;
 	
 	public Workbook getInputWorkBook(final String excelName) {
 		synchronized(ExcelUtil.class) {
 			if(inputWorkBook == null) {
 				synchronized(ExcelUtil.class) {
-					String key = (String) PropertiesUtil.getPropertyObj("\\resources\\config.properties").get(excelName);
-					createExcelInstance(key);
+//					String key = (String) PropertiesUtil.getPropertyObj("\\resources\\config.properties").get(excelName);
+					createExcelInstance(TestBase.prop.getProperty(excelName));
 				}
 			}
 		}
@@ -72,4 +74,7 @@ public class ExcelUtil {
 		}
 	}
 	
+	public static void saveExcelWithUpdatedData() {
+		//TODO
+	}
 }
