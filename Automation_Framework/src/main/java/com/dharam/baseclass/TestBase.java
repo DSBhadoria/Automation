@@ -16,7 +16,7 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
-import com.dharam.enums.DriverType;
+import com.dharam.reports.Log;
 import com.dharam.utils.WebEventListener;
 
 /**
@@ -27,37 +27,37 @@ import com.dharam.utils.WebEventListener;
 abstract public class TestBase {
 
 	protected static WebDriver driver;
-	public static Properties prop;
+	protected static Properties prop;
 	protected static EventFiringWebDriver e_driver;
 	protected static WebEventListener eventListener;
 
+	protected static Workbook workBook;
+	
+	public static final String rootDir = System.getProperty("user.dir");
+	private static final String CONFIG_PATH = "/resources/config.properties";
+	
 	public TestBase() {
 		if (prop == null) {
 			loadPropertyFile();
 		}
 	}
 
-	private static final String CONFIG_PATH = "/resources/config.properties";
 
 	/**
 	 * @author dhbhador
 	 * @description Loading the config.prperties file.
 	 */
 	private static void loadPropertyFile() {
-		try {
-			String propertyFilePath = rootDir + CONFIG_PATH;
-			InputStream input = new FileInputStream(propertyFilePath);
+		String propertyFilePath = rootDir + CONFIG_PATH;
+		try(InputStream input = new FileInputStream(propertyFilePath)) {
 			prop = new Properties();
 			prop.load(input);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			DOMConfigurator.configure("log4j.xml");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.error(e.getMessage());
 		}
 	}
 
-	protected static Workbook workBook;
-	public static final String rootDir = System.getProperty("user.dir");
 
 	/**
 	 * @author dhbhador
@@ -67,7 +67,7 @@ abstract public class TestBase {
 	 *              Configuring the log4j.xml.
 	 */
 	@SuppressWarnings("deprecation")
-	public void initialize(final String browser) {
+	protected void initialize(final String browser) {
 		if (browser.equalsIgnoreCase("chrome")) {
 			System.setProperty("webdriver.chrome.driver", rootDir + "\\drivers\\chromedriver.exe");
 			driver = new ChromeDriver();
@@ -94,8 +94,6 @@ abstract public class TestBase {
 
 		String url = prop.getProperty("url");
 		driver.navigate().to(url);
-
-		DOMConfigurator.configure("log4j.xml");
 	}
 
 }

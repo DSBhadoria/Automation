@@ -28,6 +28,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dharam.baseclass.TestBase;
+import com.dharam.reports.Log;
 
 public class GenericUtil extends TestBase {
 
@@ -85,14 +86,14 @@ public class GenericUtil extends TestBase {
 		try {
 			file = new FileInputStream(TESTDATA_SHEET_PATH);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Log.error(e.getMessage());
 		}
 		try {
 			book = WorkbookFactory.create(file);
 		} catch (InvalidFormatException e) {
-			e.printStackTrace();
+			Log.fatal(e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.fatal(e.getMessage());
 		}
 	}
 	
@@ -156,10 +157,8 @@ public class GenericUtil extends TestBase {
 					+ fileName.substring(fileName.indexOf("."));
 			FileOutputStream fO = new FileOutputStream(fileName);
 			book.write(fO);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.fatal(e.getMessage());
 		}
 	}
 	
@@ -172,7 +171,6 @@ public class GenericUtil extends TestBase {
 		String currentDir = System.getProperty("user.dir");
 		FileUtils.copyFile(scrFile, new File(currentDir + "/screenshots/" + System.currentTimeMillis() + ".png"));
 	}
-
 	
 	/**
 	 * @author dhbhador

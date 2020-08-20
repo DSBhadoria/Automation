@@ -19,6 +19,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.events.WebDriverEventListener;
 
 import com.dharam.baseclass.TestBase;
+import com.dharam.reports.Log;
 
 public class WebEventListener extends TestBase implements WebDriverEventListener {
 
@@ -67,7 +68,7 @@ public class WebEventListener extends TestBase implements WebDriverEventListener
 		try {
 			GenericUtil.takeScreenshot();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.warn(e.getMessage());
 		}
 	}
 
