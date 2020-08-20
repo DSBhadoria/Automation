@@ -1,4 +1,4 @@
-package com.dharam.logger;
+package com.dharam.reports;
 
 import org.apache.log4j.Logger;
 
