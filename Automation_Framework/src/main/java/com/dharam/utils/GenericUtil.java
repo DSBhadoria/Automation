@@ -3,12 +3,16 @@ package com.dharam.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -25,7 +29,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dharam.baseclass.TestBase;
 
-public class GenericUtils extends TestBase {
+public class GenericUtil extends TestBase {
 
 	public static void switchToBrowserTab(final WebDriver driver) {
 		driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL + "\t");
@@ -37,7 +41,7 @@ public class GenericUtils extends TestBase {
 		element.sendKeys(text);
 	}
 
-	public static void scrollIntoView(final WebDriver driver, final WebElement ele) {
+	public static void scrollIntoView(WebElement ele) {
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView()", ele);
 	}
 
@@ -57,19 +61,26 @@ public class GenericUtils extends TestBase {
 			iterator.next();
 		}
 	}
-
-	private static WebDriverWait wait = new WebDriverWait(driver, 15);
-
+	
+	public static final WebDriverWait wait = new WebDriverWait(driver, 15);
+	
 	public static void webdriverWaitUntilElementIsClickable(WebElement element) {
 		wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
 
-	public static final String TESTDATA_SHEET_PATH = System.getProperty("user.dir") + "/resources/testdata.xlsx";
-
+	public static final String TESTDATA_SHEET_PATH = rootDir + "/resources/testdata.xlsx";
+	
 	static Workbook book;
 	static Sheet sheet;
-
-	public static Object[][] getTestData(String sheetName) {
+	
+	/**
+	 * @Description Static Block - Initializing the Workbook.
+	 */
+	static {
+		initializeWorkbook();
+	}
+	
+	private static void initializeWorkbook() {
 		FileInputStream file = null;
 		try {
 			file = new FileInputStream(TESTDATA_SHEET_PATH);
@@ -83,6 +94,13 @@ public class GenericUtils extends TestBase {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	/**
+	 * @Description Get the data from the {@param sheetName} Sheet. 
+	 */
+	public static Object[][] getTestData(String sheetName) {
 		sheet = book.getSheet(sheetName);
 		Object[][] data = new Object[sheet.getLastRowNum()][sheet.getRow(0).getLastCellNum()];
 		for (int i = 0; i < sheet.getLastRowNum(); i++) {
@@ -92,13 +110,70 @@ public class GenericUtils extends TestBase {
 		}
 		return data;
 	}
-
+	
+	
+	/**
+	 * @author dhbhador
+	 * @return Get Cell data based on the Excel, Sheet and the Column name
+	 */
+	public static String getSheetData(final String sheet, final String column) {
+		Sheet sheetObj = book.getSheet(sheet);
+		Row row = sheetObj.getRow(0);
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			if (row.getCell(i).getStringCellValue().equalsIgnoreCase(column)) {
+				return sheetObj.getRow(1).getCell(i).getStringCellValue();
+			}
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * @author dhbhador
+	 * @return update Cell data based on the Excel, Sheet and the Column name
+	 */
+	public static void updateExcel(String sheet, final String column, final String data) {
+		Sheet sheetObj = book.getSheet(sheet);
+		Row row = sheetObj.getRow(0);
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			if (row.getCell(i).getStringCellValue().equalsIgnoreCase(column)) {
+				sheetObj.getRow(1).getCell(i).setCellValue(data);
+				break;
+			}
+		}
+	}
+	
+	
+	/**
+	 * @Description Saving the Updated Testdata.xlsx as a new named excel file.
+	 */
+	public static void saveUpdatedExcel() {
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm-ss");
+			String formatedDateTime = LocalDateTime.now().format(formatter);
+			String fileName = TESTDATA_SHEET_PATH;
+			fileName = fileName.substring(0, fileName.indexOf(".")).concat("_") + formatedDateTime  
+					+ fileName.substring(fileName.indexOf("."));
+			FileOutputStream fO = new FileOutputStream(fileName);
+			book.write(fO);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 *@Description For Screenshot taking - During Exception Mainly. 
+	 */
 	public static void takeScreenshot() throws IOException {
 		File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 		String currentDir = System.getProperty("user.dir");
 		FileUtils.copyFile(scrFile, new File(currentDir + "/screenshots/" + System.currentTimeMillis() + ".png"));
 	}
 
+	
 	/**
 	 * @author dhbhador
 	 * @description Flushing the Drivers executables from the process, if present.
