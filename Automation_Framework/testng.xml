@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="TestSuite" thread-count="1" verbose="1" parallel="none">
-	
 	<listeners>
-			<listener class-name="com.dharam.logger.ExtentReporterNG" />
+			<listener class-name="com.dharam.reports.ExtentReporterNG" />
 	</listeners>
-	
 	<test name="FlipkartE2E">
 		<parameter name="browser" value="chrome"/>
 		<classes>
@@ -14,14 +12,10 @@
 					<include name="login"/>
 					<include name="productSearch"/>
 					<include name="addToCartAndPlaceOrder"/>
-					<include name="setANewDeliveryAddress"/>
+					<!-- <include name="setANewDeliveryAddress"/> -->
+					<include name="verifyAddedProductDetailsOnCheckoutScreen"/>
 				</methods>
 			</class>
 		</classes>
 	</test>
-	
-	<!-- <listeners>
-		<listener
-			class-name="com.testng.listeners.ListenerTest" />
-	</listeners>  -->
 </suite>
