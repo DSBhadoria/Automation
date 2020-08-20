@@ -13,8 +13,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 
 import com.dharam.baseclass.TestBase;
-import com.dharam.datareader.ExcelUtil;
-import com.dharam.utils.GenericUtils;
+import com.dharam.utils.GenericUtil;
 
 public class CheckoutPage extends TestBase {
 
@@ -102,8 +101,8 @@ public class CheckoutPage extends TestBase {
 	}
 
 	public void openNewAddressForm() {
-		GenericUtils.webdriverWaitUntilElementIsClickable(addANewAddress);
-		GenericUtils.scrollIntoView(driver, addANewAddress);
+		GenericUtil.webdriverWaitUntilElementIsClickable(addANewAddress);
+		GenericUtil.scrollIntoView(addANewAddress);
 		addANewAddress.click();
 	}
 
@@ -112,23 +111,23 @@ public class CheckoutPage extends TestBase {
 	}
 
 	public void enterMob(final String mobile) {
-		GenericUtils.clickClearAndType(mob, mobile);
+		GenericUtil.clickClearAndType(mob, mobile);
 	}
 
 	public void enterPincode(final String pincode) {
-		GenericUtils.clickClearAndType(this.pincode, pincode);
+		GenericUtil.clickClearAndType(this.pincode, pincode);
 	}
 
 	public void enterLocality(final String locality) {
-		GenericUtils.clickClearAndType(this.locality, locality);
+		GenericUtil.clickClearAndType(this.locality, locality);
 	}
 
 	public void enterAddress(final String address) {
-		GenericUtils.clickClearAndType(this.address, address);
+		GenericUtil.clickClearAndType(this.address, address);
 	}
 
 	public void enterCityDistrictTown(final String city) {
-		GenericUtils.clickClearAndType(city_disctrict_town, city);
+		GenericUtil.clickClearAndType(city_disctrict_town, city);
 	}
 
 	public void selectStateFromDropdown(final String stateValue) {
@@ -137,11 +136,11 @@ public class CheckoutPage extends TestBase {
 	}
 
 	public void enterLandmark(final String landmark) {
-		GenericUtils.clickClearAndType(landmark_optional, landmark);
+		GenericUtil.clickClearAndType(landmark_optional, landmark);
 	}
 
 	public void enterAlternatePhone(final String alternatemob) {
-		GenericUtils.clickClearAndType(alternate_phone_no_optional, alternatemob);
+		GenericUtil.clickClearAndType(alternate_phone_no_optional, alternatemob);
 	}
 
 	/**
@@ -150,7 +149,7 @@ public class CheckoutPage extends TestBase {
 	public void selectAddressTypeRadioBtn(final String addressType) {
 		address_type.forEach(homeOrWorkAddress -> {
 			if (homeOrWorkAddress.getAttribute("for").equalsIgnoreCase(addressType)) {
-				GenericUtils.scrollIntoView(driver, homeOrWorkAddress);
+				GenericUtil.scrollIntoView(homeOrWorkAddress);
 				homeOrWorkAddress.click();
 				return;
 			}
@@ -161,34 +160,34 @@ public class CheckoutPage extends TestBase {
 	 * @Desciption Fill the Mew Address Details for the Product Delivery.
 	 */
 	public void fillAddressFormForProductDelivery(Workbook workBook, final String sheetName) {
-		String name = ExcelUtil.getSheetData(workBook, sheetName, "name");
+		String name = GenericUtil.getSheetData(sheetName, "name");
 		enterName(name);
 
-		String mob = ExcelUtil.getSheetData(workBook, sheetName, "mobile");
+		String mob = GenericUtil.getSheetData(sheetName, "mobile");
 		enterMob(mob);
 
-		String pincode = ExcelUtil.getSheetData(workBook, sheetName, "pincode");
+		String pincode = GenericUtil.getSheetData(sheetName, "pincode");
 		enterPincode(pincode);
 
-		String locality = ExcelUtil.getSheetData(workBook, sheetName, "locality");
+		String locality = GenericUtil.getSheetData(sheetName, "locality");
 		enterLocality(locality);
 
-		String address = ExcelUtil.getSheetData(workBook, sheetName, "address");
+		String address = GenericUtil.getSheetData(sheetName, "address");
 		enterAddress(address);
 
-		String city = ExcelUtil.getSheetData(workBook, sheetName, "city");
+		String city = GenericUtil.getSheetData(sheetName, "city");
 		enterCityDistrictTown(city);
 
-		String state = ExcelUtil.getSheetData(workBook, sheetName, "state");
+		String state = GenericUtil.getSheetData(sheetName, "state");
 		selectStateFromDropdown(state);
 
-		String landmark = ExcelUtil.getSheetData(workBook, sheetName, "landmark");
+		String landmark = GenericUtil.getSheetData(sheetName, "landmark");
 		enterLandmark(landmark);
 
-		String alternatephone = ExcelUtil.getSheetData(workBook, sheetName, "alternatephone");
+		String alternatephone = GenericUtil.getSheetData(sheetName, "alternatephone");
 		enterAlternatePhone(alternatephone);
 
-		String addresstype = ExcelUtil.getSheetData(workBook, sheetName, "addresstype");
+		String addresstype = GenericUtil.getSheetData(sheetName, "addresstype");
 		selectAddressTypeRadioBtn(addresstype);
 	}
 
@@ -209,10 +208,10 @@ public class CheckoutPage extends TestBase {
 	 */
 	public boolean creditDebitATMCardPayment(final String cardno, final String month, final String year,
 			final String cvv) {
-		GenericUtils.clickClearAndType(cardNumber, cardno);
-		GenericUtils.selectDropdownByValue(monthDropdown, month);
-		GenericUtils.selectDropdownByValue(yearDropdown, year);
-		GenericUtils.clickClearAndType(city_disctrict_town, cvv);
+		GenericUtil.clickClearAndType(cardNumber, cardno);
+		GenericUtil.selectDropdownByValue(monthDropdown, month);
+		GenericUtil.selectDropdownByValue(yearDropdown, year);
+		GenericUtil.clickClearAndType(city_disctrict_town, cvv);
 		return payBtn.isEnabled();
 	}
 
@@ -220,12 +219,12 @@ public class CheckoutPage extends TestBase {
 	 * @Description Payment based on the Payment Type Method.
 	 */
 	public boolean paymentForThePurchase() {
-		String paymentType = ExcelUtil.getSheetData(workBook, "payment", "paymenttype");
+		String paymentType = GenericUtil.getSheetData("payment", "paymenttype");
 		Boolean payBtnEnabled = false;
 		if (paymentType.equalsIgnoreCase("card")) {
-			String cardnumber = ExcelUtil.getSheetData(workBook, "payment", "card_number");
-			String month = ExcelUtil.getSheetData(workBook, "payment", "mm");
-			String year = ExcelUtil.getSheetData(workBook, "payment", "yy");
+			String cardnumber = GenericUtil.getSheetData("payment", "card_number");
+			String month = GenericUtil.getSheetData("payment", "mm");
+			String year = GenericUtil.getSheetData("payment", "yy");
 			payBtnEnabled = creditDebitATMCardPayment(cardnumber, month, year, "***");
 		}
 		return payBtnEnabled;
@@ -237,17 +236,15 @@ public class CheckoutPage extends TestBase {
 	public boolean verifyAddedProductDetailsOnCheckoutScreen() {
 		List<WebElement> cartProductList = getcheckedoutProductList();
 		String productNameXpath = "child::*[contains(@class,'vIvU_')]/*[1]";
-		String productPriceXpath = "*[contains(@class,'vZa')]";
-		String expectedProductName = ExcelUtil.getSheetData(workBook, "productinfo", "productName");
-		String expectedProductPrice = ExcelUtil.getSheetData(workBook, "productinfo", "productprice");
+		String productPriceXpath = "/*[contains(@class,'vZa')]";
+		String expectedProductName = GenericUtil.getSheetData("productinfo", "productName");
+		String expectedProductPrice = GenericUtil.getSheetData("productinfo", "productprice");
 
 		boolean productPresent = false;
 		for (int i = 0; i < cartProductList.size(); i++) {
-
 			WebElement actualProduct = cartProductList.get(i);
 			String productName = actualProduct.findElement(By.xpath(productNameXpath)).getText();
-
-			if (productName.contains(expectedProductName)) {
+			if (expectedProductName.contains(productName)) {
 				// Assert.assertEquals(productName, expectedProductName);
 				String productPrice = actualProduct.findElement(By.xpath(productPriceXpath)).getText();
 				Assert.assertEquals(productPrice, expectedProductPrice);

@@ -5,8 +5,8 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import com.dharam.baseclass.TestBase;
-import com.dharam.datareader.ExcelUtil;
-import com.dharam.utils.GenericUtils;
+import com.dharam.reports.Log;
+import com.dharam.utils.GenericUtil;
 
 public class ProductPage extends TestBase {
 	@FindBy(xpath = "//h1/*")
@@ -39,14 +39,16 @@ public class ProductPage extends TestBase {
 	}
 
 	public ProductCartPage addProductToCart() {
-		GenericUtils.scrollIntoView(driver, addToCartBtn);
+		GenericUtil.scrollIntoView(addToCartBtn);
 		addToCartBtn.click();
 		return new ProductCartPage();
 	}
 
 	public void productTobeAddedUpdateDetailsIntoTheExcel() {
-		ExcelUtil.updateExcel(workBook, "productinfo", "productname", productName.getText());
-		ExcelUtil.updateExcel(workBook, "productinfo", "productprice", productPrice.getText());
-		ExcelUtil.updateExcel(workBook, "productinfo", "productdescription", productDescription.getText());
+		GenericUtil.updateExcel("productinfo", "productname", productName.getText());
+		GenericUtil.updateExcel("productinfo", "productprice", productPrice.getText());
+		GenericUtil.updateExcel("productinfo", "productdescription", productDescription.getText());
+		Log.info(productName.getText() + " - " + productPrice.getText() 
+			+ " - " + productDescription.getText() + " Updated in the Excel.");
 	}
 }

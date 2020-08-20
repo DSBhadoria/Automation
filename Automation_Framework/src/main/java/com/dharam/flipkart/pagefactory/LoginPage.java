@@ -6,11 +6,10 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.FindBys;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dharam.baseclass.TestBase;
-import com.dharam.logger.Log;
+import com.dharam.reports.Log;
+import com.dharam.utils.GenericUtil;
 
 public class LoginPage extends TestBase {
 
@@ -69,10 +68,10 @@ public class LoginPage extends TestBase {
 	}
 
 	public void logout() {
+		GenericUtil.webdriverWaitUntilElementIsClickable(displayedUsername);
 		Actions action = new Actions(driver);
 		action.moveToElement(displayedUsername).moveToElement(logout).click().build().perform();
-		new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOf(loginBtn));
-		Log.info("Logged out from the flipkart.");
+		GenericUtil.webdriverWaitUntilElementIsClickable(loginBtn);
+		Log.info("Logged out from the Application.");
 	}
-
 }

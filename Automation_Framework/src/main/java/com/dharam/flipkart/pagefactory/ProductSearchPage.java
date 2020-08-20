@@ -12,9 +12,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dharam.baseclass.TestBase;
-import com.dharam.datareader.ExcelUtil;
-import com.dharam.logger.Log;
-import com.dharam.utils.GenericUtils;
+import com.dharam.reports.Log;
+import com.dharam.utils.GenericUtil;
 
 public class ProductSearchPage extends TestBase {
 
@@ -33,12 +32,12 @@ public class ProductSearchPage extends TestBase {
 	}
 
 	public void productSearch() {
-		String productName = ExcelUtil.getSheetData(workBook, "productinfo", "searchproduct");
+		String productName = GenericUtil.getSheetData("productinfo", "searchproduct");
 		searchTextInputBox.click();
 		searchTextInputBox.sendKeys(productName);
 		searchTextInputBox.sendKeys(Keys.ENTER);
 		Log.info(productName + " searched.");
-		new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOfAllElements(getProductList()));
+//		new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOfAllElements(getProductList()));
 	}
 
 	public ProductPage randomlySelectTheProduct() {
@@ -46,7 +45,7 @@ public class ProductSearchPage extends TestBase {
 		WebElement randomWebElement = productList.get(random);
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView()", randomWebElement);
 		randomWebElement.click();
-		GenericUtils.switchToNthWindow(driver, driver.getWindowHandles().size());
+		GenericUtil.switchToNthWindow(driver, driver.getWindowHandles().size());
 		return new ProductPage();
 	}
 }

@@ -16,7 +16,6 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
-import com.dharam.datareader.ExcelUtil;
 import com.dharam.enums.DriverType;
 import com.dharam.utils.WebEventListener;
 
@@ -46,7 +45,7 @@ abstract public class TestBase {
 	 */
 	private static void loadPropertyFile() {
 		try {
-			String propertyFilePath = System.getProperty("user.dir") + CONFIG_PATH;
+			String propertyFilePath = rootDir + CONFIG_PATH;
 			InputStream input = new FileInputStream(propertyFilePath);
 			prop = new Properties();
 			prop.load(input);
@@ -58,8 +57,6 @@ abstract public class TestBase {
 	}
 
 	protected static Workbook workBook;
-	protected ExcelUtil excelUtil;
-
 	public static final String rootDir = System.getProperty("user.dir");
 
 	/**
@@ -71,7 +68,6 @@ abstract public class TestBase {
 	 */
 	@SuppressWarnings("deprecation")
 	public void initialize(final String browser) {
-		System.out.println(DriverType.CHROME.toString());
 		if (browser.equalsIgnoreCase("chrome")) {
 			System.setProperty("webdriver.chrome.driver", rootDir + "\\drivers\\chromedriver.exe");
 			driver = new ChromeDriver();
@@ -93,16 +89,13 @@ abstract public class TestBase {
 		driver = e_driver;
 
 		driver.manage().deleteAllCookies();
-		driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
+		driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
 		String url = prop.getProperty("url");
 		driver.navigate().to(url);
 
 		DOMConfigurator.configure("log4j.xml");
-
-		excelUtil = new ExcelUtil();
-		workBook = excelUtil.getInputWorkBook("inputexcel");
 	}
 
 }
