@@ -257,7 +257,8 @@ public class CheckoutPage extends TestBase {
 	}
 
 	/**
-	 * @description Payment Btn enability needs to be checked before clicking on it.
+	 * @description Payment Btn enability needs 
+	 * to be checked before clicking on it.
 	 */
 	public void verifyPayBtnIsEnabledThenDoPayment() {
 		Assert.assertTrue(payBtn.isEnabled());
